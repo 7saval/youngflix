@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
-import { getDiscoverMoviesWithDetails } from "@/lib/tmdb";
+import { getCachedDiscoverMovies } from "@/app/actions/tmdb";
 
 export async function syncTmdbMoviesAction() {
-  const movies = await getDiscoverMoviesWithDetails();
+  const movies = await getCachedDiscoverMovies();
 
   await Promise.all(
     movies.map((movie) =>
