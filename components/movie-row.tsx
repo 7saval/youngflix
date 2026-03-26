@@ -1,7 +1,7 @@
 "use client";
 
 import type { Movie } from "@prisma/client";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { MovieCard } from "@/components/movie-card";
 
@@ -13,11 +13,19 @@ type MovieRowProps = {
 
 const PREVIEW_WIDTH = 320;
 const PREVIEW_GUTTER = 24;
-const SCROLL_DURATION_MS = 520;
+const SCROLL_DURATION_MS = 600;
 
 export function MovieRow({ title, movies, onSelectMovie }: MovieRowProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   if (movies.length === 0) {
     return null;
