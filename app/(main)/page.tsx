@@ -1,6 +1,6 @@
 import { syncTmdbMoviesAction } from "@/app/actions/sync-movies";
 import { HeroBanner } from "@/components/hero-banner";
-import { MovieRow } from "@/components/movie-row";
+import { MovieSections } from "@/components/movie-sections";
 import { buildHomePageData } from "@/lib/home-sections";
 import { prisma } from "@/lib/prisma";
 import type { Movie } from "@prisma/client";
@@ -21,7 +21,7 @@ export default async function HomePage() {
               Youngflix
             </p>
             <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              홈
+              지금 뜨는 홈
             </h1>
           </div>
 
@@ -44,16 +44,11 @@ export default async function HomePage() {
           <HeroBanner movie={featuredMovie} />
         ) : (
           <section className="rounded-2xl border border-dashed border-neutral-700 bg-neutral-950 px-8 py-20 text-center text-neutral-400">
-            아직 저장된 영화가 없습니다. TMDB 동기화를 실행하면 홈 화면이
-            구성됩니다.
+            아직 저장된 영화가 없습니다. TMDB 동기화를 실행하면 홈 화면이 채워집니다.
           </section>
         )}
 
-        <section className="space-y-10">
-          {sections.map((section) => (
-            <MovieRow key={section.title} movies={section.movies} title={section.title} />
-          ))}
-        </section>
+        <MovieSections sections={sections} />
       </section>
     </main>
   );
