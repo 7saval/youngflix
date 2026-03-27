@@ -18,7 +18,7 @@ export function MovieCard({ movie, onSelect, onPreviewStart }: MovieCardProps) {
   const releaseYear = movie.releaseDate?.getFullYear();
   const rating =
     typeof movie.voteAverage === "number" ? movie.voteAverage.toFixed(1) : null;
-  const genres = movie.genreNames.slice(0, 2).join(" • ");
+  const genres = movie.genreNames.slice(0, 2).join(" · ");
 
   const handlePreviewStart = () => {
     if (articleRef.current) {
@@ -28,12 +28,12 @@ export function MovieCard({ movie, onSelect, onPreviewStart }: MovieCardProps) {
 
   return (
     <article
-      className="group relative h-[430px] w-[180px] flex-none transition-[width] duration-300 ease-out hover:w-[320px] focus-within:w-[320px] md:h-[460px] md:w-[200px]"
+      className="group pointer-events-none relative -mt-[160px] h-[430px] w-[180px] flex-none pt-[160px] transition-[width] duration-300 ease-out hover:w-[320px] focus-within:w-[320px] md:h-[460px] md:w-[200px] md:pt-[160px]"
       ref={articleRef}
     >
       <button
         aria-label={`${movie.title} 상세 보기`}
-        className="absolute bottom-0 left-0 z-10 h-[270px] w-full overflow-hidden rounded-xl bg-neutral-900 text-left shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-[height,box-shadow] duration-300 ease-out hover:z-40 hover:h-[430px] hover:shadow-[0_30px_80px_rgba(0,0,0,0.58)] focus-visible:z-40 focus-visible:h-[430px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/80 focus-visible:shadow-[0_30px_80px_rgba(0,0,0,0.58)] md:h-[300px] md:focus-visible:h-[460px] md:hover:h-[460px]"
+        className="pointer-events-auto absolute bottom-0 left-0 z-10 h-[270px] w-full overflow-hidden rounded-xl bg-neutral-900 text-left shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-[height,box-shadow] duration-300 ease-out hover:z-40 hover:h-[430px] hover:shadow-[0_30px_80px_rgba(0,0,0,0.58)] focus-visible:z-40 focus-visible:h-[430px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/80 focus-visible:shadow-[0_30px_80px_rgba(0,0,0,0.58)] md:h-[300px] md:focus-visible:h-[460px] md:hover:h-[460px]"
         onClick={() => onSelect(movie)}
         onFocus={handlePreviewStart}
         onMouseEnter={handlePreviewStart}

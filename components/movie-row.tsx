@@ -93,9 +93,7 @@ export function MovieRow({ title, movies, onSelectMovie }: MovieRowProps) {
         <h2 className="text-xl font-semibold text-white md:text-2xl">
           {title}
         </h2>
-        <span className="text-sm text-neutral-400">
-          {movies.length}개 콘텐츠
-        </span>
+        <span className="text-sm text-neutral-400">{movies.length}개 콘텐츠</span>
       </div>
 
       <div
