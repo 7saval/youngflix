@@ -4,15 +4,21 @@ import { supabaseServer } from "@/lib/supabase-server";
 import { getOrCreateUserProfile } from "@/lib/user-profile";
 import type { ApiFailure, SyncUserProfileResponse } from "@/types/api";
 
-type SyncUserProfileRequest = {
-  accessToken?: string;
-};
+function getAccessTokenFromAuthorizationHeader(request: Request) {
+  const authorization = request.headers.get("Authorization");
+
+  if (!authorization?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  return authorization.slice("Bearer ".length).trim() || null;
+}
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as SyncUserProfileRequest;
+    const accessToken = getAccessTokenFromAuthorizationHeader(request);
 
-    if (!body.accessToken) {
+    if (!accessToken) {
       const response: ApiFailure = {
         ok: false,
         error: "Missing access token.",
@@ -24,7 +30,7 @@ export async function POST(request: Request) {
     const {
       data: { user },
       error,
-    } = await supabaseServer.auth.getUser(body.accessToken);
+    } = await supabaseServer.auth.getUser(accessToken);
 
     if (error || !user) {
       const response: ApiFailure = {

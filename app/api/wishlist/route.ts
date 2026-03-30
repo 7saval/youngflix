@@ -10,7 +10,6 @@ import {
 import type { ApiFailure, WishlistStateResponse } from "@/types/api";
 
 type WishlistBody = {
-  accessToken?: string;
   tmdbId?: number;
 };
 
@@ -40,9 +39,19 @@ async function getAuthenticatedProfile(
   };
 }
 
+function getAccessTokenFromAuthorizationHeader(request: Request) {
+  const authorization = request.headers.get("Authorization");
+
+  if (!authorization?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  return authorization.slice("Bearer ".length).trim() || null;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const accessToken = searchParams.get("accessToken");
+  const accessToken = getAccessTokenFromAuthorizationHeader(request);
   const tmdbId = Number(searchParams.get("tmdbId"));
 
   if (!accessToken) {
@@ -86,7 +95,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = (await request.json()) as WishlistBody;
-  const accessToken = body.accessToken;
+  const accessToken = getAccessTokenFromAuthorizationHeader(request);
   const tmdbId = body.tmdbId;
 
   if (!accessToken) {
@@ -130,7 +139,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   const body = (await request.json()) as WishlistBody;
-  const accessToken = body.accessToken;
+  const accessToken = getAccessTokenFromAuthorizationHeader(request);
   const tmdbId = body.tmdbId;
 
   if (!accessToken) {

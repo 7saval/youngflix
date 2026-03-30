@@ -2,6 +2,7 @@ type RequestOptions = {
   body?: unknown;
   method?: "GET" | "POST" | "DELETE";
   query?: Record<string, string>;
+  headers?: Record<string, string>;
 };
 
 import type {
@@ -12,7 +13,7 @@ import type {
 
 async function request<T>(
   path: string,
-  { body, method = "GET", query }: RequestOptions = {},
+  { body, method = "GET", query, headers }: RequestOptions = {},
 ): Promise<T> {
   const url = new URL(path, window.location.origin);
 
@@ -24,12 +25,14 @@ async function request<T>(
 
   const response = await fetch(url.toString(), {
     method,
-    headers:
-      body !== undefined
+    headers: {
+      ...(body !== undefined
         ? {
             "Content-Type": "application/json",
           }
-        : undefined,
+        : {}),
+      ...headers,
+    },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
@@ -50,14 +53,18 @@ async function request<T>(
   return data as T;
 }
 
+function createAuthorizationHeader(accessToken: string) {
+  return {
+    Authorization: `Bearer ${accessToken}`,
+  };
+}
+
 export const apiClient = {
   userProfile: {
     sync(accessToken: string) {
       return request<SyncUserProfileResponse>("/api/user-profile/sync", {
         method: "POST",
-        body: {
-          accessToken,
-        },
+        headers: createAuthorizationHeader(accessToken),
       });
     },
   },
@@ -65,27 +72,27 @@ export const apiClient = {
     get(accessToken: string, tmdbId: number) {
       return request<WishlistStateResponse>("/api/wishlist", {
         query: {
-          accessToken,
           tmdbId: String(tmdbId),
         },
+        headers: createAuthorizationHeader(accessToken),
       });
     },
     add(accessToken: string, tmdbId: number) {
       return request<WishlistStateResponse>("/api/wishlist", {
         method: "POST",
         body: {
-          accessToken,
           tmdbId,
         },
+        headers: createAuthorizationHeader(accessToken),
       });
     },
     remove(accessToken: string, tmdbId: number) {
       return request<WishlistStateResponse>("/api/wishlist", {
         method: "DELETE",
         body: {
-          accessToken,
           tmdbId,
         },
+        headers: createAuthorizationHeader(accessToken),
       });
     },
   },
