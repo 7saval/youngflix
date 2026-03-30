@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import type { Movie } from "@prisma/client";
+
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
+import type { CatalogMovie } from "@/types/movie";
 import { useEffect, useMemo, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 
 type MovieDetailModalProps = {
-  movie: Movie;
+  movie: CatalogMovie;
   onClose: () => void;
 };
 
@@ -33,10 +36,23 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
   const releaseYear = movie.releaseDate?.getFullYear();
   const rating =
     typeof movie.voteAverage === "number" ? movie.voteAverage.toFixed(1) : null;
+  const { user, session } = useAuth();
+  const {
+    isWishlisted,
+    loading: wishlistLoading,
+    ready,
+    toggleWishlist,
+  } = useWishlist({
+    accessToken: session?.access_token,
+    enabled: Boolean(user),
+    tmdbId: movie.tmdbId,
+  });
+
   const genreLabel =
     movie.genreNames.length > 0
       ? movie.genreNames.slice(0, 3).join(" · ")
       : null;
+
   const [isPlaying, setIsPlaying] = useState(Boolean(movie.trailerKey));
   const [isMuted, setIsMuted] = useState(Boolean(movie.trailerKey));
   const [currentTime, setCurrentTime] = useState(0);
@@ -325,6 +341,24 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                     : "예고편 재생"
                   : "예고편 없음"}
               </button>
+              <button
+                className="rounded-full border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={!user || wishlistLoading}
+                onClick={() => {
+                  void toggleWishlist();
+                }}
+                type="button"
+              >
+                {!user
+                  ? "로그인 후 찜 가능"
+                  : wishlistLoading
+                    ? "처리 중..."
+                    : !ready
+                      ? "불러오는 중..."
+                      : isWishlisted
+                        ? "찜 해제"
+                        : "찜하기"}
+              </button>
               {movie.trailerKey ? (
                 <span className="rounded-full border border-white/20 px-5 py-3 text-sm font-medium text-white">
                   {isMuted ? "현재 음소거" : "현재 소리 켜짐"}
@@ -369,9 +403,14 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
 
             <div className="space-y-1">
               <p className="text-xs uppercase tracking-[0.28em] text-neutral-500">
-                Trailer
+                Wishlist
               </p>
               <p className="text-sm text-neutral-200">
+                {!user
+                  ? "로그인하면 찜 목록에 저장할 수 있습니다."
+                  : isWishlisted
+                    ? "현재 찜 목록에 저장된 콘텐츠입니다."
+                    : "원하면 찜 목록에 저장해 나중에 다시 볼 수 있습니다."}
                 {movie.trailerKey
                   ? "영상 영역에서 예고편을 선명하게 재생하고, hover 시 컨트롤을 사용할 수 있습니다."
                   : "예고편 데이터가 없어 대표 이미지를 표시합니다."}

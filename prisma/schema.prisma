@@ -8,21 +8,81 @@ datasource db {
 }
 
 model Movie {
+  // MongoDB 문서 고유 ID
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  // TMDB에서 내려주는 영화 고유 식별자
   tmdbId       Int      @unique
+  // 영화 제목
   title        String
+  // 영화 줄거리 요약
   overview     String?
+  // YouTube 예고편 재생에 사용하는 key
   trailerKey   String?
+  // 세로형 포스터 이미지 URL
   posterUrl    String?
+  // 가로형 배경 이미지 URL
   backdropUrl  String?
+  // 개봉일
   releaseDate  DateTime?
+  // TMDB 평균 평점
   voteAverage  Float?
 
+  // TMDB 장르 ID 목록
   genreIds     Int[]
+  // 화면 표시용 장르 이름 목록
   genreNames   String[]
 
+  // 문서 생성 시각
   createdAt    DateTime @default(now())
+  // 문서 마지막 수정 시각
   updatedAt    DateTime @updatedAt
 }
 
+model UserProfile {
+  // MongoDB 문서 고유 ID
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  // Supabase Auth의 user.id와 연결되는 외부 인증 식별자
+  supabaseUserId String   @unique
+  // 사용자 이메일
+  email          String   @unique
+  // 서비스 내 표시용 닉네임
+  nickname       String?
+  // 사용자 프로필 이미지 URL
+  avatarUrl      String?
+  // 로그인 제공자 정보 예: email, google
+  provider       String?
+  // 프로필 생성 시각
+  createdAt      DateTime @default(now())
+  // 프로필 마지막 수정 시각
+  updatedAt      DateTime @updatedAt
+}
 
+model Wishlist {
+  // MongoDB 문서 고유 ID
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // UserProfile의 내부 사용자 ID
+  userId    String   @db.ObjectId
+  // 찜한 영화의 TMDB 식별자
+  tmdbId    Int
+  // 찜한 시각
+  createdAt DateTime @default(now())
+
+  // 같은 사용자가 같은 영화를 중복으로 찜하지 못하도록 제한
+  @@unique([userId, tmdbId])
+}
+
+model RecentlyViewed {
+  // MongoDB 문서 고유 ID
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  // UserProfile의 내부 사용자 ID
+  userId    String   @db.ObjectId
+  // 최근 본 영화의 TMDB 식별자
+  tmdbId    Int
+  // 최초 기록 시각
+  createdAt DateTime @default(now())
+  // 마지막 시청 시각 또는 최근 갱신 시각
+  updatedAt DateTime @updatedAt
+
+  // 같은 사용자의 같은 영화 기록은 1건만 유지하도록 제한
+  @@unique([userId, tmdbId])
+}

@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import type { Movie } from "@prisma/client";
 import { useRef } from "react";
 
 import { MovieCardOverlay } from "@/components/movie-card-overlay";
+import type { CatalogMovie } from "@/types/movie";
 
 type MovieCardProps = {
-  movie: Movie;
-  onSelect: (movie: Movie) => void;
+  movie: CatalogMovie;
+  onSelect: (movie: CatalogMovie) => void;
   onPreviewStart?: (element: HTMLElement) => void;
 };
 
