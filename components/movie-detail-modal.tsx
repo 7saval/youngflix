@@ -30,11 +30,15 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
   const rating =
     typeof movie.voteAverage === "number" ? movie.voteAverage.toFixed(1) : null;
   const genreLabel =
-    movie.genreNames.length > 0 ? movie.genreNames.slice(0, 3).join(" · ") : null;
+    movie.genreNames.length > 0
+      ? movie.genreNames.slice(0, 3).join(" · ")
+      : null;
   const [isPlaying, setIsPlaying] = useState(Boolean(movie.trailerKey));
   const [isMuted, setIsMuted] = useState(Boolean(movie.trailerKey));
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  const PROGRESS_UPDATE_INTERVAL_MS = 500;
 
   const trailerOptions = useMemo(
     () => ({
@@ -79,7 +83,7 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
     clearProgressTimer();
     progressTimerRef.current = window.setInterval(() => {
       void syncPlaybackProgress();
-    }, 500);
+    }, PROGRESS_UPDATE_INTERVAL_MS);
   };
 
   useEffect(() => {
@@ -250,7 +254,9 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                   }}
                   type="button"
                 >
-                  <span className="text-lg leading-none">{isMuted ? "🔇" : "🔊"}</span>
+                  <span className="text-lg leading-none">
+                    {isMuted ? "🔇" : "🔊"}
+                  </span>
                 </button>
               </div>
             </>
