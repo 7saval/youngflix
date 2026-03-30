@@ -1,15 +1,11 @@
 import { syncTmdbMoviesAction } from "@/app/actions/sync-movies";
 import { HeroBanner } from "@/components/hero-banner";
 import { MovieSections } from "@/components/movie-sections";
+import { getHomeCatalogMovies } from "@/lib/catalog";
 import { buildHomePageData } from "@/lib/home-sections";
-import { prisma } from "@/lib/prisma";
-import type { Movie } from "@prisma/client";
 
 export default async function HomePage() {
-  const movies: Movie[] = await prisma.movie.findMany({
-    orderBy: { updatedAt: "desc" },
-    take: 60,
-  });
+  const movies = await getHomeCatalogMovies();
   const { featuredMovie, sections } = buildHomePageData(movies);
 
   return (

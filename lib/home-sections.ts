@@ -1,16 +1,16 @@
-import type { Movie } from "@prisma/client";
+import type { CatalogMovie } from "@/types/movie";
 
 // 홈 화면의 각 가로 섹션(Row)이 가져야 하는 기본 형태입니다.
 // 예: "지금 인기 있는 콘텐츠" / [영화 배열]
 export type HomeSection = {
   title: string;
-  movies: Movie[];
+  movies: CatalogMovie[];
 };
 
 // 메인 홈 화면에서 필요한 최종 데이터 구조입니다.
 // 대표 배너에 들어갈 영화 1개와, 아래에 렌더링할 여러 섹션 목록으로 구성합니다.
 export type HomePageData = {
-  featuredMovie: Movie | null;
+  featuredMovie: CatalogMovie | null;
   sections: HomeSection[];
 };
 
@@ -20,7 +20,7 @@ const MAX_MOVIES_PER_ROW = 12;
 // 장르 Row도 너무 많아지면 화면이 복잡해지므로 상위 몇 개만 보여줍니다.
 const MAX_GENRE_ROWS = 6;
 
-function getFeaturedMovie(movies: Movie[]) {
+function getFeaturedMovie(movies: CatalogMovie[]) {
   // 대표 배너에는 가로형 배경 이미지가 있으면 가장 보기 좋기 때문에
   // backdrop 또는 poster가 있는 영화를 우선 찾습니다.
   // 조건에 맞는 영화가 없으면 첫 번째 영화라도 보여주고,
@@ -30,14 +30,14 @@ function getFeaturedMovie(movies: Movie[]) {
   );
 }
 
-function getPopularMovies(movies: Movie[]) {
+function getPopularMovies(movies: CatalogMovie[]) {
   // 현재는 DB에서 가져온 순서를 그대로 "인기 콘텐츠"로 사용합니다.
   // page.tsx에서 updatedAt 기준으로 정렬해서 가져오기 때문에
   // 여기서는 앞쪽 영화 몇 개만 잘라서 보여줍니다.
   return movies.slice(0, MAX_MOVIES_PER_ROW);
 }
 
-function getTopRatedMovies(movies: Movie[]) {
+function getTopRatedMovies(movies: CatalogMovie[]) {
   // 평점이 없는 영화는 제외하고,
   // 평점이 높은 순서대로 정렬한 뒤 상위 몇 개만 가져옵니다.
   // [...movies]로 복사하는 이유는 원본 배열을 직접 바꾸지 않기 위해서입니다.
@@ -47,10 +47,10 @@ function getTopRatedMovies(movies: Movie[]) {
     .slice(0, MAX_MOVIES_PER_ROW);
 }
 
-function getGenreSections(movies: Movie[]) {
+function getGenreSections(movies: CatalogMovie[]) {
   // 장르 이름을 key로, 그 장르에 속한 영화 배열을 value로 저장할 Map입니다.
   // 예: "Action" => [영화1, 영화2, 영화3]
-  const genreMap = new Map<string, Movie[]>();
+  const genreMap = new Map<string, CatalogMovie[]>();
 
   // 모든 영화를 돌면서 각 영화가 가진 장르별로 Map에 차곡차곡 모읍니다.
   for (const movie of movies) {
@@ -80,7 +80,7 @@ function getGenreSections(movies: Movie[]) {
     }));
 }
 
-export function buildHomePageData(movies: Movie[]): HomePageData {
+export function buildHomePageData(movies: CatalogMovie[]): HomePageData {
   // 대표 배너에 들어갈 영화 1개를 먼저 고릅니다.
   const featuredMovie = getFeaturedMovie(movies);
 

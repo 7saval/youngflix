@@ -1,8 +1,8 @@
 import Image from "next/image";
-import type { Movie } from "@prisma/client";
+import type { CatalogMovie } from "@/types/movie";
 
 type HeroBannerProps = {
-  movie: Movie;
+  movie: CatalogMovie;
 };
 
 export function HeroBanner({ movie }: HeroBannerProps) {

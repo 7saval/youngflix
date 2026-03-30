@@ -2,10 +2,16 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
+<<<<<<< Updated upstream
 import type { Movie } from "@prisma/client";
+=======
+import { useEffect, useMemo, useRef, useState } from "react";
+import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
+import type { CatalogMovie } from "@/types/movie";
+>>>>>>> Stashed changes
 
 type MovieDetailModalProps = {
-  movie: Movie;
+  movie: CatalogMovie;
   onClose: () => void;
 };
 

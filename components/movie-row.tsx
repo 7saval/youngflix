@@ -1,14 +1,14 @@
 "use client";
 
-import type { Movie } from "@prisma/client";
 import { useEffect, useRef } from "react";
 
 import { MovieCard } from "@/components/movie-card";
+import type { CatalogMovie } from "@/types/movie";
 
 type MovieRowProps = {
   title: string;
-  movies: Movie[];
-  onSelectMovie: (movie: Movie) => void;
+  movies: CatalogMovie[];
+  onSelectMovie: (movie: CatalogMovie) => void;
 };
 
 const PREVIEW_WIDTH = 320;
@@ -103,7 +103,7 @@ export function MovieRow({ title, movies, onSelectMovie }: MovieRowProps) {
         <div className="flex min-w-max items-end gap-4 md:gap-5">
           {movies.map((movie) => (
             <MovieCard
-              key={movie.id}
+              key={movie.tmdbId}
               movie={movie}
               onPreviewStart={revealCard}
               onSelect={onSelectMovie}
