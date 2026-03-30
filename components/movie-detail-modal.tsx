@@ -10,6 +10,10 @@ type MovieDetailModalProps = {
   onClose: () => void;
 };
 
+const PROGRESS_UPDATE_INTERVAL_MS = 500;
+const PLAYED_PROGRESS_COLOR = "#e50914";
+const REMAINING_PROGRESS_COLOR = "rgba(255, 255, 255, 0.28)";
+
 function formatTime(seconds: number) {
   if (!Number.isFinite(seconds) || seconds < 0) {
     return "0:00";
@@ -37,8 +41,6 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
   const [isMuted, setIsMuted] = useState(Boolean(movie.trailerKey));
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-
-  const PROGRESS_UPDATE_INTERVAL_MS = 500;
 
   const trailerOptions = useMemo(
     () => ({
@@ -179,6 +181,7 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
   const progressMax = duration > 0 ? duration : 0;
   const progressPercent =
     progressMax > 0 ? Math.min((currentTime / progressMax) * 100, 100) : 0;
+  const progressTrackBackground = `linear-gradient(to right, ${PLAYED_PROGRESS_COLOR} ${progressPercent}%, ${REMAINING_PROGRESS_COLOR} ${progressPercent}%)`;
 
   return (
     <div
@@ -221,7 +224,7 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                     }}
                     step={0.1}
                     style={{
-                      background: `linear-gradient(to right, #e50914 0%, #e50914 ${progressPercent}%, rgba(255,255,255,0.28) ${progressPercent}%, rgba(255,255,255,0.28) 100%)`,
+                      background: progressTrackBackground,
                     }}
                     type="range"
                     value={Math.min(currentTime, progressMax)}
