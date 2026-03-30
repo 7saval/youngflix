@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
 import Image from "next/image";
-<<<<<<< Updated upstream
-import type { Movie } from "@prisma/client";
-=======
 import { useEffect, useMemo, useRef, useState } from "react";
 import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
 import type { CatalogMovie } from "@/types/movie";
->>>>>>> Stashed changes
 
 type MovieDetailModalProps = {
   movie: CatalogMovie;
@@ -157,7 +152,9 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                 Trailer
               </p>
               <p className="text-sm text-neutral-200">
-                {movie.trailerKey ? "예고편 데이터를 보유하고 있습니다." : "예고편 데이터가 아직 없습니다."}
+                {movie.trailerKey
+                  ? "예고편 데이터를 보유하고 있습니다."
+                  : "예고편 데이터가 아직 없습니다."}
               </p>
             </div>
           </div>

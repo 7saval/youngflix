@@ -30,7 +30,7 @@ export default async function HomePage() {
                 className="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
                 type="submit"
               >
-                동기화
+                새로고침
               </button>
             </form>
           </div>
@@ -40,7 +40,8 @@ export default async function HomePage() {
           <HeroBanner movie={featuredMovie} />
         ) : (
           <section className="rounded-2xl border border-dashed border-neutral-700 bg-neutral-950 px-8 py-20 text-center text-neutral-400">
-            아직 저장된 영화가 없습니다. TMDB 동기화를 실행하면 홈 화면이 채워집니다.
+            아직 저장된 영화가 없습니다. TMDB 동기화를 실행하면 홈 화면이
+            채워집니다.
           </section>
         )}
 
