@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import YouTube, { type YouTubeEvent, type YouTubePlayer } from "react-youtube";
+import { useEffect } from "react";
+
+import { useAuth } from "@/hooks/useAuth";
+import { useWishlist } from "@/hooks/useWishlist";
 import type { CatalogMovie } from "@/types/movie";
 
 type MovieDetailModalProps = {
@@ -15,6 +17,13 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
   const releaseYear = movie.releaseDate?.getFullYear();
   const rating =
     typeof movie.voteAverage === "number" ? movie.voteAverage.toFixed(1) : null;
+  const { user, session } = useAuth();
+  const { isWishlisted, loading: wishlistLoading, ready, toggleWishlist } =
+    useWishlist({
+      accessToken: session?.access_token,
+      enabled: Boolean(user),
+      tmdbId: movie.tmdbId,
+    });
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -88,7 +97,7 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                 ) : null}
                 {releaseYear ? <span>{releaseYear}</span> : null}
                 {movie.genreNames.length > 0 ? (
-                  <span>{movie.genreNames.slice(0, 3).join(" • ")}</span>
+                  <span>{movie.genreNames.slice(0, 3).join(" · ")}</span>
                 ) : null}
               </div>
             </div>
@@ -105,10 +114,22 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
                 {movie.trailerKey ? "예고편 준비" : "상세 정보"}
               </button>
               <button
-                className="rounded-full border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                className="rounded-full border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={!user || wishlistLoading}
+                onClick={() => {
+                  void toggleWishlist();
+                }}
                 type="button"
               >
-                내가 찜할까?
+                {!user
+                  ? "로그인 후 찜 가능"
+                  : wishlistLoading
+                    ? "처리 중..."
+                    : !ready
+                      ? "불러오는 중..."
+                      : isWishlisted
+                        ? "찜 해제"
+                        : "찜하기"}
               </button>
             </div>
 
@@ -149,12 +170,14 @@ export function MovieDetailModal({ movie, onClose }: MovieDetailModalProps) {
 
             <div className="space-y-1">
               <p className="text-xs uppercase tracking-[0.28em] text-neutral-500">
-                Trailer
+                Wishlist
               </p>
               <p className="text-sm text-neutral-200">
-                {movie.trailerKey
-                  ? "예고편 데이터를 보유하고 있습니다."
-                  : "예고편 데이터가 아직 없습니다."}
+                {!user
+                  ? "로그인하면 찜 목록에 저장할 수 있습니다."
+                  : isWishlisted
+                    ? "현재 찜 목록에 저장된 콘텐츠입니다."
+                    : "원하면 찜 목록에 저장해 나중에 다시 볼 수 있습니다."}
               </p>
             </div>
           </div>
