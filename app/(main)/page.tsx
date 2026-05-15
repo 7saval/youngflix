@@ -11,6 +11,7 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <section className="mx-auto flex w-full max-w-[1600px] flex-col gap-10 px-6 py-6 md:px-10 md:py-8">
+        {/* Navbar 공간 확보는 (main)/layout.tsx의 pt-20으로 처리됨 */}
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-2">
             <p className="text-sm uppercase tracking-[0.35em] text-red-500">
